@@ -12,17 +12,17 @@
 - Laravel -10 API (backend)
 
 ### Frontend
-cd challenge/challenge-frontend
-npm install
-npm run dev
+- cd challenge/challenge-frontend
+- npm install
+- npm run dev
 
 ### Backend
-cd challenge/challenge-backend
-composer install
-cp .env.example .env
-php artisan key:generate
-php artisan migrate --seed
-php artisan serve
+- cd challenge/challenge-backend
+- composer install
+- cp .env.example .env
+- php artisan key:generate
+- php artisan migrate --seed
+- php artisan serve
 
 ## Features
 - Login with token-based auth (Laravel Sanctum)
@@ -35,5 +35,5 @@ php artisan serve
 - Favorites page
 
 ## Environment
-Frontend runs on: http://localhost:5173
-Backend runs on: http://127.0.0.1:8000
+- Frontend runs on: http://localhost:5173
+- Backend runs on: http://127.0.0.1:8000
