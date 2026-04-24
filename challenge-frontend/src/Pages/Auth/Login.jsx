@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useAuth } from "../Context/AuthContext";
 import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../../Context/useAuth";
 
 function Login() {
   const { login } = useAuth();
@@ -18,29 +18,33 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setErrors({});
 
+    const response = await fetch("http://127.0.0.1:8000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(form),
+    });
+
+    let data;
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setErrors(data.errors || { general: data.message });
-        return;
-      }
-
-      login(data.user, data.token);
-      navigate("/");
+      data = await response.json();
     } catch {
-      setErrors({ general: "Something went wrong. Please try again." });
-    } finally {
+      console.log("Invalid response");
       setLoading(false);
+      return;
     }
+
+    if (response.ok) {
+      login(data.token, data.user);
+      navigate("/");
+    } else {
+      setErrors(data.errors || { general: data.message });
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -57,7 +61,6 @@ function Login() {
           )}
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            {/* Email */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Email</span>
@@ -81,8 +84,6 @@ function Login() {
                 </label>
               )}
             </div>
-
-            {/* Password */}
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Password</span>
@@ -109,12 +110,14 @@ function Login() {
 
             <button
               type="submit"
-              className={`btn btn-primary w-full mt-2 ${
-                loading ? "loading" : ""
-              }`}
+              className="btn btn-primary w-full mt-2"
               disabled={loading}
             >
-              {loading ? "Signing in..." : "Sign in"}
+              {loading ? (
+                <span className="loading loading-spinner loading-sm"></span>
+              ) : (
+                "Sign in"
+              )}
             </button>
           </form>
 
