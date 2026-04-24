@@ -14,9 +14,13 @@ class AuthController extends Controller
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|email|unique:users,email',
-            'password' => 'required|min:8|confirmed',
+            'name'             => 'required|string|max:255',
+            'email'            => 'required|email|unique:users,email',
+            'phone'            => 'required|max:10',
+            'designation'      => 'required|string|max:255',
+            'department'       => 'required|string|max:255',
+            'password'         => 'required|min:8|confirmed',
+            'profile_picture'  => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -27,11 +31,24 @@ class AuthController extends Controller
         }
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => 'user',
+            'name'        => $request->name,
+            'email'       => $request->email,
+            'phone'       => $request->phone,
+            'designation' => $request->designation,
+            'department'  => $request->department,
+            'password'    => Hash::make($request->password),
+            'role'        => 'user',
         ]);
+
+        // handle profile picture
+        if ($request->hasFile('profile_picture')) {
+            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
+
+            $user->userPictures()->create([
+                'path' => $path,
+            ]);
+        }
+
 
         $token = $user->createToken('api-token')->plainTextToken;
 
@@ -98,7 +115,9 @@ class AuthController extends Controller
             'id'    => $user->id,
             'name'  => $user->name,
             'email' => $user->email,
+            'phone' => $user->phone,
             'role'  => $user->role,
+            'user_pictures' => $user->userPictures,
         ];
     }
 }

@@ -16,12 +16,12 @@ class UserSeeder extends Seeder
         User::firstOrCreate(
             ['email' => env('ADMIN_EMAIL')],
             [
-                'name' => 'admin',
+                'name' => 'Admin',
                 'password' => Hash::make(env('ADMIN_PASSWORD')),
                 'role' => 'admin'
             ]
         );
 
-        User::factory(200)->create();
+        User::factory(20)->create();
     }
 }
