@@ -33,7 +33,3 @@
 - Reset preferences
 - Favorite users (persisted)
 - Favorites page
-
-## Environment
-- Frontend runs on: http://localhost:5173
-- Backend runs on: http://127.0.0.1:8000
